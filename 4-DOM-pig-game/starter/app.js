@@ -15,54 +15,61 @@ GAME RULES:
 // var x = document.querySelector("#score-0").textContent;
 // console.log(x);
 
-var scores, roundScore;
+var scores, roundScore, activePlayer, inGame;
 
 init();
 
 //when roll a dice
 document.querySelector(".btn-roll").addEventListener("click", function() {
-  //1. Random number
-  var dice = Math.floor(Math.random() * 6) + 1;
+  if (inGame) {
+    //1. Random number
+    var dice = Math.floor(Math.random() * 6) + 1;
 
-  //2. Display the result
-  var diceDOM = document.querySelector(".dice");
-  diceDOM.style.display = "block";
-  diceDOM.src = "dice-" + dice + ".png";
+    //2. Display the result
+    var diceDOM = document.querySelector(".dice");
+    diceDOM.style.display = "block";
+    diceDOM.src = "dice-" + dice + ".png";
 
-  //3. Update the round score IF the rolled number was NOT a 1
-  if (dice !== 1) {
-    //Add score
-    roundScore += dice;
-    document.querySelector("#current-" + activePlayer).textContent = roundScore;
-  } else {
-    //next player
-    nextPlayer();
+    //3. Update the round score IF the rolled number was NOT a 1
+    if (dice !== 1) {
+      //Add score
+      roundScore += dice;
+      document.querySelector(
+        "#current-" + activePlayer
+      ).textContent = roundScore;
+    } else {
+      //next player
+      nextPlayer();
+    }
   }
 });
 
 //Hold the current score and add the score to the play score, next player
 document.querySelector(".btn-hold").addEventListener("click", function() {
-  //get roundScore add it to scores
-  scores[activePlayer] += roundScore;
+  if (inGame) {
+    //get roundScore add it to scores
+    scores[activePlayer] += roundScore;
 
-  //change score board of current player
-  document.querySelector("#score-" + activePlayer).textContent =
-    scores[activePlayer];
+    //change score board of current player
+    document.querySelector("#score-" + activePlayer).textContent =
+      scores[activePlayer];
 
-  //check win
-  if (scores[activePlayer] >= 20) {
-    //change player panel to win and not active
-    document.querySelector("#name-" + activePlayer).textContent = "Winner!";
-    document.querySelector(".dice").style.display = "none";
-    document
-      .querySelector(".player-" + activePlayer + "-panel")
-      .classList.add("winner");
-    document
-      .querySelector(".player-" + activePlayer + "-panel")
-      .classList.remove("active");
-  } else {
-    //next player
-    nextPlayer();
+    //check win
+    if (scores[activePlayer] >= 20) {
+      //change player panel to win and not active
+      document.querySelector("#name-" + activePlayer).textContent = "Winner!";
+      document.querySelector(".dice").style.display = "none";
+      document
+        .querySelector(".player-" + activePlayer + "-panel")
+        .classList.add("winner");
+      document
+        .querySelector(".player-" + activePlayer + "-panel")
+        .classList.remove("active");
+      inGame = false;
+    } else {
+      //next player
+      nextPlayer();
+    }
   }
 });
 
@@ -85,6 +92,7 @@ function init() {
   scores = [0, 0];
   roundScore = 0;
   activePlayer = 0;
+  inGame = true;
 
   //set all score to 0
   document.getElementById("score-0").textContent = "0";
