@@ -23,8 +23,14 @@ init();
 document.querySelector(".set-win").addEventListener("keypress", function(e) {
   if (e.key === "Enter") {
     e.preventDefault();
-    console.log(e.target.value);
-    winScore = e.target.value;
+    //Undefined, 0 null or "" are coerced to false
+    //anything else coerced to true
+    if (e.target.value) {
+      winScore = e.target.value;
+      console.log(e.target.value);
+    } else {
+      winScore = 100;
+    }
   }
 });
 
@@ -52,7 +58,9 @@ document.querySelector(".btn-roll").addEventListener("click", function() {
       }
 
       if (dice_1 + dice_2 === previousScore && dice_1 + dice_2 === 6) {
-        roundScore = 0;
+        // roundScore = 0;
+        scores[activePlayer] = 0;
+        document.querySelector("#score-" + activePlayer).textContent = "0";
         nextPlayer();
       }
 
