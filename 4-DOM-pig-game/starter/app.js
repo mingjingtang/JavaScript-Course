@@ -15,25 +15,49 @@ GAME RULES:
 // var x = document.querySelector("#score-0").textContent;
 // console.log(x);
 
-var scores, roundScore, activePlayer, inGame;
+var scores, roundScore, activePlayer, inGame, previousScore, winScore;
 
 init();
+
+//set score for win
+document.querySelector(".set-win").addEventListener("keypress", function(e) {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    console.log(e.target.value);
+    winScore = e.target.value;
+  }
+});
 
 //when roll a dice
 document.querySelector(".btn-roll").addEventListener("click", function() {
   if (inGame) {
     //1. Random number
-    var dice = Math.floor(Math.random() * 6) + 1;
+    var dice_1 = Math.floor(Math.random() * 6) + 1;
+    var dice_2 = Math.floor(Math.random() * 6) + 1;
 
     //2. Display the result
-    var diceDOM = document.querySelector(".dice");
-    diceDOM.style.display = "block";
-    diceDOM.src = "dice-" + dice + ".png";
+    var diceDOM_1 = document.querySelector(".dice-1");
+    diceDOM_1.style.display = "block";
+    diceDOM_1.src = "dice-" + dice_1 + ".png";
+
+    var diceDOM_2 = document.querySelector(".dice-2");
+    diceDOM_2.style.display = "block";
+    diceDOM_2.src = "dice-" + dice_2 + ".png";
 
     //3. Update the round score IF the rolled number was NOT a 1
-    if (dice !== 1) {
+    if (dice_1 !== 1 && dice_2 != 1) {
       //Add score
-      roundScore += dice;
+      if (roundScore === 0) {
+        previousScore = dice_1 + dice_2;
+      }
+
+      if (dice_1 + dice_2 === previousScore && dice_1 + dice_2 === 6) {
+        roundScore = 0;
+        nextPlayer();
+      }
+
+      previousScore = dice_1 + dice_2;
+      roundScore += dice_1 + dice_2;
       document.querySelector(
         "#current-" + activePlayer
       ).textContent = roundScore;
@@ -55,10 +79,11 @@ document.querySelector(".btn-hold").addEventListener("click", function() {
       scores[activePlayer];
 
     //check win
-    if (scores[activePlayer] >= 20) {
+    if (scores[activePlayer] >= winScore) {
       //change player panel to win and not active
       document.querySelector("#name-" + activePlayer).textContent = "Winner!";
-      document.querySelector(".dice").style.display = "none";
+      document.querySelector(".dice-1").style.display = "none";
+      document.querySelector(".dice-2").style.display = "none";
       document
         .querySelector(".player-" + activePlayer + "-panel")
         .classList.add("winner");
@@ -82,7 +107,8 @@ function nextPlayer() {
   document.querySelector(".player-0-panel").classList.toggle("active");
   document.querySelector(".player-1-panel").classList.toggle("active");
 
-  document.querySelector(".dice").style.display = "none";
+  document.querySelector(".dice-1").style.display = "none";
+  document.querySelector(".dice-2").style.display = "none";
 }
 
 //when hit the new game button the game will be set to init
@@ -100,7 +126,8 @@ function init() {
   document.getElementById("current-0").textContent = "0";
   document.getElementById("current-1").textContent = "0";
 
-  document.querySelector(".dice").style.display = "none";
+  document.querySelector(".dice-1").style.display = "none";
+  document.querySelector(".dice-2").style.display = "none";
 
   document.querySelector(".player-0-panel").classList.remove("winner");
   document.querySelector(".player-0-panel").classList.remove("active");
@@ -111,4 +138,7 @@ function init() {
   document.getElementById("name-1").textContent = "Player 2";
 
   document.querySelector(".player-0-panel").classList.add("active");
+
+  document.querySelector(".set-win").innerHTML =
+    '<input class="set-score" type="text" placeholder="set score for win" />';
 }
