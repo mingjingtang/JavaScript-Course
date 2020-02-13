@@ -128,3 +128,113 @@ console.log(ageGreater18);
 var rates = arrayCalc(ages, maxHeartRate);
 console.log(rates);
 */
+
+/*
+//Functions returning functions
+function interviewQuestions(job) {
+  if (job === "teacher") {
+    return function(name) {
+      console.log("What do you teach " + name + "?");
+    };
+  } else if (job === "Designer") {
+    return function(name) {
+      console.log("What do you design " + name + "?");
+    };
+  } else {
+    return function(name) {
+      console.log("What do you do " + name + "?");
+    };
+  }
+}
+
+interviewQuestions("teacher")("john");
+interviewQuestions("Designer")("Mark");
+interviewQuestions("doctor")("Jane");
+*/
+
+/*
+//Lecture: IIFE
+(function() {
+  var score = Math.random() * 10;
+  console.log(score >= 5);
+})();
+
+(function(goodLuck) {
+  var score = Math.random() * 10;
+  console.log(score >= 5 - goodLuck);
+})(5);
+*/
+
+/*
+//Lecture: Closures
+function retirement(retirementAge) {
+  var a = " years left until retirement.";
+  return function(yearOfBirth) {
+    var age = 2020 - yearOfBirth;
+    console.log(retirementAge - age + a);
+  };
+}
+
+retirement(66)(1989);
+
+var retirementGermany = retirement(65);
+var retirementIceland = retirement(67);
+
+retirementGermany(1989);
+retirementIceland(1989);
+
+function interviewQuestions(job) {
+  var a = "What do you teach ";
+  return function(name) {
+    if (job === "teacher") {
+      console.log(a + name + "?");
+    } else if (job === "Designer") {
+      console.log(a + name + "?");
+    } else {
+      console.log(a + name + "?");
+    }
+  };
+}
+
+interviewQuestions("teacher")("Mark");
+interviewQuestions("Designer")("Jane");
+*/
+
+//Bind, call and apply
+var john = {
+  name: "John",
+  age: 26,
+  job: "teacher",
+  presentation: function(style, timeOfDay) {
+    if (style === "formal") {
+      console.log(
+        "Good " +
+          timeOfDay +
+          ", Ladies and gentlemen! I'm " +
+          this.name +
+          this.job +
+          this.age
+      );
+    } else if (style === "friendly") {
+      console.log(
+        "Hey! What's up? I'm " + this.name + this.job + this.age + timeOfDay
+      );
+    }
+  }
+};
+
+var emily = {
+  name: "Emily",
+  age: 35,
+  job: "designer"
+};
+
+john.presentation("friendly", "morning");
+john.presentation.call(emily, "friendly", "afternoon");
+
+var johnFriendly = john.presentation.bind(john, "friendly");
+johnFriendly("morning");
+johnFriendly("night");
+
+var emilyFormal = john.presentation.bind(emily, "formal");
+emilyFormal("afternoon");
