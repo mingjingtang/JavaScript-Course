@@ -200,6 +200,7 @@ interviewQuestions("teacher")("Mark");
 interviewQuestions("Designer")("Jane");
 */
 
+/*
 //Bind, call and apply
 var john = {
   name: "John",
@@ -238,3 +239,39 @@ johnFriendly("night");
 
 var emilyFormal = john.presentation.bind(emily, "formal");
 emilyFormal("afternoon");
+*/
+
+//Fun quiz game
+
+var questions = ["", "How's the weather today?", "What is the date today? "];
+var answers = ["", "1. rainy", "2. Feb 13 2020"];
+
+function Questions(questions, score) {
+  let randomQuestion = Math.floor(Math.random() * 2) + 1;
+  console.log(randomQuestion);
+
+  //question itself
+  let answerNum = prompt(questions[randomQuestion] + answers[1] + answers[2]);
+
+  //answer from the player
+  console.log(answerNum);
+  console.log(answers[answerNum]);
+
+  //check the correct answer
+  if (answers[answerNum] === answers[randomQuestion]) {
+    console.log("You'r correct!");
+    score++;
+    console.log("Your score is " + score);
+  } else if (answerNum == "exit") {
+    return;
+  } else {
+    console.log(
+      "You'r wrong!" + "The correct answer is " + answers[randomQuestion]
+    );
+    console.log("Your score is " + score);
+  }
+
+  return Questions(questions, score);
+}
+
+Questions(questions, 0);
