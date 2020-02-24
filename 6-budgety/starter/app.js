@@ -1,4 +1,4 @@
-//BUDGETCONTROLLER
+//MODEL
 var budgetController = (function() {
   var Expense = function(id, description, value) {
     this.id = id;
@@ -24,8 +24,8 @@ var budgetController = (function() {
   };
 
   return {
-    addItem: function(type, des, val) {
-      var newItem, ID;
+    userAddedItem: function(type, des, val) {
+      var newAddedItem, ID;
       //Create new ID
       if (data.allItems[type].length > 0) {
         ID = data.allItems[type][data.allItems[type].length - 1].id + 1;
@@ -34,12 +34,12 @@ var budgetController = (function() {
       }
 
       if (type === "exp") {
-        newItem = new Expense(ID, des, val);
+        newAddedItem = new Expense(ID, des, val);
       } else if (type === "inc") {
-        newItem = new Income(ID, des, val);
+        newAddedItem = new Income(ID, des, val);
       }
-      data.allItems[type].push(newItem);
-      return newItem;
+      data.allItems[type].push(newAddedItem);
+      return newAddedItem;
     },
 
     testing: function() {
@@ -48,10 +48,10 @@ var budgetController = (function() {
   };
 })();
 
-//UI CONTROLLER
+//VEIW
 var UIController = (function() {
   //structure make it easier to work on
-  var DOMstrings = {
+  var newObjectClass = {
     inputType: ".add__type",
     inputDescription: ".add__description",
     inputValue: ".add__value",
@@ -63,21 +63,21 @@ var UIController = (function() {
   return {
     getInput: function() {
       return {
-        type: document.querySelector(DOMstrings.inputType).value,
-        description: document.querySelector(DOMstrings.inputDescription).value,
-        value: document.querySelector(DOMstrings.inputValue).value
+        type: document.querySelector(newObjectClass.inputType).value,
+        description: document.querySelector(newObjectClass.inputDescription)
+          .value,
+        value: document.querySelector(newObjectClass.inputValue).value
       };
     },
 
-    /*
     addListItem: function(obj, type) {
       var html, newHtml, element;
       if (type === "inc") {
-        element = DOMstrings.incomeContainer;
+        element = newObjectClass.incomeContainer;
         html =
-          '<div class="item clearfix" id="income-%id%><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
+          '<div class="item clearfix" id="inc-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
       } else if (type === "exp") {
-        element = DOMstrings.expensesContainer;
+        element = newObjectClass.expensesContainer;
         html =
           '<div class="item clearfix" id="expense-%id%"><div class="item__description">%description</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
       }
@@ -87,23 +87,20 @@ var UIController = (function() {
       newHtml = newHtml.replace("%value%", obj.value);
 
       //Insert the HTML into the DOM
-      document
-        .querySelector(element)
-        .insertAdjacentElement("beforeend", newHtml);
+      document.querySelector(element).insertAdjacentHTML("beforeend", newHtml);
     },
-    */
 
-    //expose DOMStrings into public
-    getDOMstrings: function() {
-      return DOMstrings;
+    //expose newObjectClass into public
+    getnewObjectClass: function() {
+      return newObjectClass;
     }
   };
 })();
 
-//GLOBAL APP CONTROLLER
+//CONTROLLER
 var controller = (function(budgetController, UIController) {
   var setupEventListeners = function() {
-    var DOM = UIController.getDOMstrings();
+    var DOM = UIController.getnewObjectClass();
     document
       .querySelector(DOM.inputButton)
       .addEventListener("click", ctrlAddItem);
@@ -116,24 +113,24 @@ var controller = (function(budgetController, UIController) {
   };
 
   var ctrlAddItem = function() {
-    var input, newItem;
+    var input, newAddedItem;
 
     //1. Get the field input data
-    input = UIController.getInput();
+    input = UIController.getInput(); // View.getUserInputValues()
 
     //2. Add the item to the budget controller
-    newItem = budgetController.addItem(
+    newAddedItem = budgetController.userAddedItem(
       input.type,
       input.description,
       input.value
     );
 
-    //3. Add the item to the UI
-    // UIController.addListItem(newItem, input.type);
+    //3. Add the item to the UI // income/expense Container
+    UIController.addListItem(newAddedItem, input.type);
 
-    //4. Calculate the budget
+    //4. Calculate the budget // balance (in Modal)
 
-    //5. Display the budget on the UI
+    //5. Display the budget on the UI // Upper Balance Display Area
 
     console.log("It works.");
   };
