@@ -79,7 +79,7 @@ var UIController = (function() {
       } else if (type === "exp") {
         element = newObjectClass.expensesContainer;
         html =
-          '<div class="item clearfix" id="expense-%id%"><div class="item__description">%description</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
+          '<div class="item clearfix" id="expense-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
       }
 
       newHtml = html.replace("%id%", obj.id);
@@ -88,6 +88,28 @@ var UIController = (function() {
 
       //Insert the HTML into the DOM
       document.querySelector(element).insertAdjacentHTML("beforeend", newHtml);
+    },
+
+    clearFields: function() {
+      var fields, fieldsArr;
+
+      fields = document.querySelectorAll(
+        newObjectClass.inputDescription + ", " + newObjectClass.inputValue
+      );
+
+      fieldsArr = Array.prototype.slice.call(fields);
+      console.log(fieldsArr);
+
+      fieldsArr.forEach(function(current, index, array) {
+        // if (index == 0) {
+        //   current.value = "";
+        // } else {
+        //   current.value = "300";
+        // }
+        current.value = "";
+      });
+
+      fieldsArr[0].focus();
     },
 
     //expose newObjectClass into public
@@ -127,6 +149,9 @@ var controller = (function(budgetController, UIController) {
 
     //3. Add the item to the UI // income/expense Container
     UIController.addListItem(newAddedItem, input.type);
+
+    //4. Clear the fields
+    UIController.clearFields();
 
     //4. Calculate the budget // balance (in Modal)
 
