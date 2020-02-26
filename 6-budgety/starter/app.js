@@ -97,7 +97,8 @@ var UIController = (function() {
     budgetLable: ".budget__value",
     incomeLable: ".budget__income--value",
     expenseLable: ".budget__expenses--value",
-    percentageLable: ".budget__expenses--percentage"
+    percentageLable: ".budget__expenses--percentage",
+    container: ".container"
   };
 
   return {
@@ -121,7 +122,7 @@ var UIController = (function() {
       } else if (type === "exp") {
         element = newObjectClass.expensesContainer;
         html =
-          '<div class="item clearfix" id="expense-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
+          '<div class="item clearfix" id="exp-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
       }
 
       newHtml = html.replace("%id%", obj.id);
@@ -190,6 +191,25 @@ var controller = (function(budgetController, UIController) {
         ctrlAddItem();
       }
     });
+
+    document.querySelector(DOM.container).addEventListener("click", deleteItem);
+  };
+
+  var deleteItem = function(event) {
+    var itemClickedID, splitID, type, ID;
+    itemClickedID = event.target.parentNode.parentNode.parentNode.parentNode.id;
+
+    if (itemClickedID) {
+      splitID = itemClickedID.split("-");
+      type = splitID[0];
+      ID = splitID[1];
+
+      //1. delete the item from the data structure
+
+      //2. Delete the item from the UI
+
+      //3. Update and show the new budget
+    }
   };
 
   var updateBudget = function() {
