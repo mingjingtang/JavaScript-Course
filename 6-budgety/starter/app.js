@@ -1,5 +1,5 @@
 //MODEL
-var budgetController = (function() {
+var model = (function() {
   var Expense = function(id, description, value) {
     this.id = id;
     this.description = description;
@@ -14,6 +14,10 @@ var budgetController = (function() {
     } else {
       this.percentage = -1;
     }
+  };
+
+  Expense.prototype.getPercentage = function() {
+    return this.percentage;
   };
 
   var Income = function(id, description, value) {
@@ -100,15 +104,11 @@ var budgetController = (function() {
       };
     },
 
-    getPercentage: function() {
-      return this.getPercentage;
-    },
-
     calculatePercentages: function() {
       data.allItems.exp.forEach(cur => cur.calcPercentage(data.totals.inc));
     },
 
-    getCalculate: function() {
+    getPercentages: function() {
       var allPerc = data.allItems.exp.map(cur => cur.getPercentage());
       return allPerc;
     },
@@ -120,7 +120,7 @@ var budgetController = (function() {
 })();
 
 //VEIW
-var UIController = (function() {
+var view = (function() {
   //structure make it easier to work on
   var newObjectClass = {
     inputType: ".add__type",
@@ -133,7 +133,8 @@ var UIController = (function() {
     incomeLable: ".budget__income--value",
     expenseLable: ".budget__expenses--value",
     percentageLable: ".budget__expenses--percentage",
-    container: ".container"
+    container: ".container",
+    itemPercentage: ".item__percentage"
   };
 
   return {
@@ -214,14 +215,36 @@ var UIController = (function() {
     //expose newObjectClass into public
     getnewObjectClass: function() {
       return newObjectClass;
+    },
+
+    diaplayItemPercentage: function(percentages) {
+      var allItemsPercentages = document.querySelectorAll(
+        newObjectClass.itemPercentage
+      );
+
+      var nodeListForEach = function(list, callback) {
+        for (var i = 0; i < list.length; i++) {
+          callback(list[i], i);
+        }
+      };
+
+      nodeListForEach(allItemsPercentages, function(current, index) {
+        if (percentages[index] > 0) {
+          current.textContent = percentages[index] + "%";
+        } else {
+          current.textContent = "---";
+        }
+      });
+
+      console.log(allItemsPercentages);
     }
   };
 })();
 
 //CONTROLLER
-var controller = (function(budgetController, UIController) {
+var controller = (function(modelParam, viewParam) {
   var setupEventListeners = function() {
-    var DOM = UIController.getnewObjectClass();
+    var DOM = viewParam.getnewObjectClass();
     document
       .querySelector(DOM.inputButton)
       .addEventListener("click", ctrlAddItem);
@@ -245,35 +268,39 @@ var controller = (function(budgetController, UIController) {
       ID = parseInt(splitID[1]);
       console.log(ID);
       //1. delete the item from the data structure
-      budgetController.deleteItemFunc(type, ID);
+      modelParam.deleteItemFunc(type, ID);
       //2. Delete the item from the UI
-      UIController.deleteItemView(itemClickedID);
+      viewParam.deleteItemView(itemClickedID);
 
       //3. Update and show the new budget
       updateBudget();
+
+      //6. Calculate and update percentages
+      updatePercentages();
     }
   };
 
   var updateBudget = function() {
     //1. Calculate the budget // balance (in Modal)
-    budgetController.calculateBudget();
+    modelParam.calculateBudget();
 
     //2. Return the budget
-    var budget = budgetController.getBudget();
+    var budget = modelParam.getBudget();
 
     //3. Display the budget on the UI // Upper Balance Display Area
     console.log(budget);
-    UIController.displayBudget(budget);
+    viewParam.displayBudget(budget);
   };
 
-  var calculatePercentage = function() {
+  var updatePercentages = function() {
     //1.calculate percentage
-    budgetController.calculatePercentages();
+    modelParam.calculatePercentages();
 
     //2.show the percentage in in Model
-    var percentages = budgetController.getPercentage();
+    var percentages = modelParam.getPercentages();
 
     //3.Update in user interface
+    viewParam.diaplayItemPercentage(percentages);
     console.log(percentages);
   };
 
@@ -281,27 +308,27 @@ var controller = (function(budgetController, UIController) {
     var input, newAddedItem;
 
     //1. Get the field input data
-    input = UIController.getInput(); // View.getUserInputValues()
+    input = viewParam.getInput(); // View.getUserInputValues()
 
     if (input.description != "" && !isNaN(input.value) && input.value != 0) {
       //2. Add the item to the budget controller
-      newAddedItem = budgetController.userAddedItem(
+      newAddedItem = modelParam.userAddedItem(
         input.type,
         input.description,
         input.value
       );
 
       //3. Add the item to the UI // income/expense Container
-      UIController.addListItem(newAddedItem, input.type);
+      viewParam.addListItem(newAddedItem, input.type);
 
       //4. Clear the fields
-      UIController.clearFields();
+      viewParam.clearFields();
 
       //5. Calculate the budget
       updateBudget();
 
-      //6. update percentage
-      calculatePercentage();
+      //6. Calculate and update percentages
+      updatePercentages();
 
       console.log("It works.");
     }
@@ -311,7 +338,7 @@ var controller = (function(budgetController, UIController) {
     init: function() {
       console.log("Application has started.");
       setupEventListeners();
-      UIController.displayBudget({
+      viewParam.displayBudget({
         budget: 0,
         totalInc: 0,
         totalExp: 0,
@@ -319,6 +346,6 @@ var controller = (function(budgetController, UIController) {
       });
     }
   };
-})(budgetController, UIController);
+})(model, view);
 
 controller.init();
