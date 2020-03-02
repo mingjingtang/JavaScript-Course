@@ -137,6 +137,30 @@ var view = (function() {
     itemPercentage: ".item__percentage"
   };
 
+  var formatNumber = function(value, type) {
+    var num, splitNum, decPart;
+
+    //absolute value and add two decimal
+    num = Math.abs(value);
+    num = num.toFixed(2);
+    console.log(num);
+
+    //split to two part: int and dec
+    splitNum = num.split(".");
+
+    intPart = splitNum[0];
+    if (intPart.length > 3) {
+      intPart =
+        intPart.substr(0, intPart.length - 3) +
+        "," +
+        intPart.substr(intPart.length - 3, intPart.length);
+    }
+
+    decPart = splitNum[1];
+
+    return (type === "inc" ? "+" : "-") + " " + intPart + "." + decPart;
+  };
+
   return {
     getInput: function() {
       return {
@@ -163,7 +187,7 @@ var view = (function() {
 
       newHtml = html.replace("%id%", obj.id);
       newHtml = newHtml.replace("%description%", obj.description);
-      newHtml = newHtml.replace("%value%", obj.value);
+      newHtml = newHtml.replace("%value%", formatNumber(obj.value, type));
 
       //Insert the HTML into the DOM
       document.querySelector(element).insertAdjacentHTML("beforeend", newHtml);
@@ -197,12 +221,18 @@ var view = (function() {
     },
 
     displayBudget: function(obj) {
-      document.querySelector(newObjectClass.budgetLable).textContent =
-        obj.budget;
-      document.querySelector(newObjectClass.incomeLable).textContent =
-        obj.totalInc;
-      document.querySelector(newObjectClass.expenseLable).textContent =
-        obj.totalExp;
+      var type;
+      obj.budget > 0 ? (type = "inc") : (type = "exp");
+
+      document.querySelector(
+        newObjectClass.budgetLable
+      ).textContent = formatNumber(obj.budget, type);
+      document.querySelector(
+        newObjectClass.incomeLable
+      ).textContent = formatNumber(obj.totalInc, "inc");
+      document.querySelector(
+        newObjectClass.expenseLable
+      ).textContent = formatNumber(obj.totalExp, "exp");
       if (obj.percentage > 0) {
         document.querySelector(newObjectClass.percentageLable).textContent =
           obj.percentage + "%";
