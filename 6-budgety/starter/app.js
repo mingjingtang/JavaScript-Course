@@ -134,7 +134,8 @@ var view = (function() {
     expenseLable: ".budget__expenses--value",
     percentageLable: ".budget__expenses--percentage",
     container: ".container",
-    itemPercentage: ".item__percentage"
+    itemPercentage: ".item__percentage",
+    titleDate: ".budget__title--month"
   };
 
   var formatNumber = function(value, type) {
@@ -159,6 +160,12 @@ var view = (function() {
     decPart = splitNum[1];
 
     return (type === "inc" ? "+" : "-") + " " + intPart + "." + decPart;
+  };
+
+  var nodeListForEach = function(list, callback) {
+    for (var i = 0; i < list.length; i++) {
+      callback(list[i], i);
+    }
   };
 
   return {
@@ -252,12 +259,6 @@ var view = (function() {
         newObjectClass.itemPercentage
       );
 
-      var nodeListForEach = function(list, callback) {
-        for (var i = 0; i < list.length; i++) {
-          callback(list[i], i);
-        }
-      };
-
       nodeListForEach(allItemsPercentages, function(current, index) {
         if (percentages[index] > 0) {
           current.textContent = percentages[index] + "%";
@@ -267,6 +268,50 @@ var view = (function() {
       });
 
       console.log(allItemsPercentages);
+    },
+
+    displayTime: function() {
+      var now, month, year;
+
+      now = new Date();
+      console.log(now);
+      month = now.getMonth();
+      months = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "June",
+        "July",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec"
+      ];
+      year = now.getFullYear();
+
+      document.querySelector(newObjectClass.titleDate).textContent =
+        months[month] + " " + year;
+    },
+
+    changeStyle: function() {
+      var field = document.querySelectorAll(
+        newObjectClass.inputType +
+          "," +
+          newObjectClass.inputDescription +
+          "," +
+          newObjectClass.inputValue
+      );
+
+      nodeListForEach(field, function(cur) {
+        cur.classList.toggle("red-focus");
+      });
+
+      document
+        .querySelector(newObjectClass.inputButton)
+        .classList.toggle("red");
     }
   };
 })();
@@ -286,6 +331,9 @@ var controller = (function(modelParam, viewParam) {
     });
 
     document.querySelector(DOM.container).addEventListener("click", deleteItem);
+    document
+      .querySelector(DOM.inputType)
+      .addEventListener("change", view.changeStyle);
   };
 
   var deleteItem = function(event) {
@@ -367,6 +415,7 @@ var controller = (function(modelParam, viewParam) {
   return {
     init: function() {
       console.log("Application has started.");
+      view.displayTime();
       setupEventListeners();
       viewParam.displayBudget({
         budget: 0,
