@@ -1,3 +1,4 @@
+/*
 //ES6 variable declaration
 
 {
@@ -111,3 +112,121 @@ const ages = [12, 5, 21, 7, 10];
 
 console.log(ages.findIndex(cur => cur > 18));
 console.log(ages.find(cur => cur > 18));
+*/
+////////////////////////////////////////////////////////////////
+//Spread Operator
+const ages = [18, 30, 12, 21];
+
+function addFourAges(a, b, c, d) {
+  return a + b + c + d;
+}
+
+//ES5
+var sum1 = addFourAges.apply(null, ages);
+console.log(sum1);
+
+//ES6
+const sum2 = addFourAges(...ages);
+console.log(sum2);
+
+//ES6 DOM
+const h1 = document.querySelector("h1");
+const boxes = document.querySelectorAll(".box");
+const all = [h1, ...boxes];
+
+Array.from(all).forEach(cur => (cur.style.color = "purple"));
+//////////////////////////////////////////////////////////////////
+//Rest parameters
+//ES5
+function isFullAge() {
+  var agesArr = Array.prototype.slice.call(arguments);
+
+  agesArr.forEach(function(cur) {
+    console.log(2020 - cur >= 18);
+  });
+}
+
+isFullAge(1989, 2010, 1962);
+
+//ES6
+function isFullAge1(limit, ...years) {
+  // console.log(years);
+  years.forEach(cur => console.log(2020 - cur) >= limit);
+}
+
+isFullAge1(18, 1989, 2010, 1962);
+//////////////////////////////////////////////////////////////////
+//Default parameters
+function SmithPerson(
+  firstName,
+  lastName = "Smith",
+  yearOfBirth,
+  nationality = "America"
+) {
+  this.firstName = firstName;
+  this.lastName = lastName;
+  this.yearOfBirth = yearOfBirth;
+  this.nationality = nationality;
+}
+
+let john = new SmithPerson("John", undefined, 1990, undefined);
+let emily = new SmithPerson("Emily", "Diza", 1983, "Spanish");
+//////////////////////////////////////////////////////////////////
+//Map
+const question = new Map();
+question.set(
+  "question",
+  "What is the officail name of the latest major JavaScript version?"
+);
+question.set(1, "ES5");
+question.set(2, "ES6");
+question.set(3, "ES2015");
+question.set(4, "ES7");
+question.set("correct", 3);
+question.set(true, "Correct answer!");
+question.set(false, "Wrong, please try again!");
+
+if (question.has(4)) {
+  console.log("Answer 4 is here");
+}
+
+for (let [key, value] of question.entries()) {
+  if (typeof key === "number") {
+    console.log(`Answer ${key}: ${value}`);
+  }
+}
+
+const ans = parseInt(prompt("Write the correct answer"));
+console.log(question.get(ans === question.get("correct")));
+////////////////////////////////////////////////////////////////////
+//Classes
+//ES5
+var Person = function(name, yearOfBirth, job) {
+  this.name = name;
+  this.yearOfBirth = yearOfBirth;
+  this.job = job;
+};
+
+Person.prototype.calcAge = function() {
+  var age = new Date().getFullYear() - this.yearOfBirth;
+  console.log(age);
+};
+
+var jane = new Person("Jane", 1989, "teacher");
+
+//ES6
+class Person1 {
+  constructor(name, yearOfBirth, job) {
+    this.name = name;
+    this.yearOfBirth = yearOfBirth;
+    this.job = job;
+  }
+
+  calcAge() {
+    var age = new Date().getFullYear() - this.yearOfBirth;
+    console.log(age);
+  }
+}
+
+const emily1 = new Person1("emily", 1989, "dancer");
+///////////////////////////////////////////////////////////////////
