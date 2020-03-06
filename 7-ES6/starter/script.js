@@ -196,8 +196,8 @@ for (let [key, value] of question.entries()) {
   }
 }
 
-const ans = parseInt(prompt("Write the correct answer"));
-console.log(question.get(ans === question.get("correct")));
+// const ans = parseInt(prompt("Write the correct answer"));
+// console.log(question.get(ans === question.get("correct")));
 ////////////////////////////////////////////////////////////////////
 //Classes
 //ES5
