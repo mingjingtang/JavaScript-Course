@@ -1,15 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Asynchronous JavaScript</title>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Asynchronous JavaScript</h1>
     <script>
-        
+      /*
+      const first = () => {
+        console.log("Hey there!");  
+        second();
+        console.log("The end.");
+      };
+
+      const second = () => {
+        setTimeout(() => {
+          console.log("Async Hey there!");
+        }, 2000);
+      };
+
+      first();
+      */
+
+      const getIDs = new Promise((resolve, reject) => {
+        const IDs = [324, 569, 399, 976];
+        setTimeout(() => {
+          resolve(IDs);
+        }, 1500);
+      });
+
+      const getRecipe = recID => {
+        return new Promise((resolve, reject) => {
+          setTimeout(
+            ID => {
+              const recipe = { author: "mingjing", dish: "shrimp spaghetti" };
+              resolve(recipe);
+            },
+            1500,
+            recID
+          );
+        });
+      };
+
+      const getRelated = author => {
+        return new Promise((resolve, reject) => {
+          setTimeout(
+            auth => {
+              const recipe = { author: "youchen", dish: "strawberry banana" };
+              if (recipe.author == auth) {
+                resolve(recipe);
+              } else {
+                console.log(`can't find ${auth}\'s dish`);
+              }
+            },
+            1500,
+            author
+          );
+        });
+      };
+
+      getIDs
+        .then(IDs => {
+          console.log(IDs);
+          return getRecipe(IDs[2]);
+        })
+        .then(ID => {
+          console.log(ID);
+          return getRelated(ID.author);
+        })
+        .then(author => {
+          console.log(author);
+        })
+        .catch(error => {
+          console.log(error);
+        });
     </script>
-</body>
+  </body>
 </html>
